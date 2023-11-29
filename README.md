@@ -1,6 +1,6 @@
 # Simple shell
 
-Short project description goes here.
+This is a shell program in C language
 
 ## Table of Contents
 - [Installation](#installation)
