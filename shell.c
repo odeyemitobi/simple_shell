@@ -8,6 +8,7 @@
 int main(void)
 {
 	char command[MAX_COMMAND_LENGTH];
+	size_t len;
 
 	while (1)
 	{
@@ -17,6 +18,13 @@ int main(void)
 		{
 			printf("\n");
 			break;
+		}
+
+		len = strlen(command);
+
+		if (len > 0 && command[len - 1] == '\n')
+		{
+			command[len - 1] = '\0';
 		}
 
 		command[strcspn(command, "\n")] = '\0';
@@ -31,4 +39,3 @@ int main(void)
 
 	return (0);
 }
-
