@@ -50,6 +50,9 @@ void printEnvironment(void)
 void executeChild(const char *command)
 {
 	char *args[MAX_COMMAND_LENGTH];
+	char *path;
+	char executable[MAX_COMMAND_LENGTH];
+	char *token;
 
 	parseArguments(command, args);
 
@@ -59,18 +62,15 @@ void executeChild(const char *command)
 		exit(EXIT_SUCCESS);
 	}
 
-	char *path = getenv("PATH");
-
+	path = getenv("PATH");
 	if (path == NULL)
 	{
 		fprintf(stderr, "Error: PATH environment variable not set.\n");
 		exit(EXIT_FAILURE);
 	}
 
-	char executable[MAX_COMMAND_LENGTH];
-
-	for (char *token = strtok(path, ":"); token
-	!= NULL; token = strtok(NULL, ":"))
+	token = strtok(path, ":");
+	while (token != NULL)
 	{
 		snprintf(executable, sizeof(executable), "%s/%s", token, args[0]);
 
@@ -82,6 +82,8 @@ void executeChild(const char *command)
 				exit(EXIT_FAILURE);
 			}
 		}
+
+		token = strtok(NULL, ":");
 	}
 
 	fprintf(stderr, "Error: Command not found: %s\n", args[0]);
