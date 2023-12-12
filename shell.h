@@ -11,5 +11,9 @@
 
 void displayPrompt(void);
 void executeCommand(const char *command);
+void parseArguments(const char *command, char *args[]);
+void printEnvironment(void);
+void executeChild(const char *command);
+void executeParent(pid_t pid);
 
 #endif /* SHELL_H */

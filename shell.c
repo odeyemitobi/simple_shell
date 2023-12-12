@@ -1,5 +1,10 @@
 #include "shell.h"
 
+/**
+ * main - runs the core logic of the shell
+ * Return: status code 0
+ */
+
 int main(void)
 {
 	char command[MAX_COMMAND_LENGTH];
@@ -26,3 +31,4 @@ int main(void)
 
 	return (0);
 }
+
