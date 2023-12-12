@@ -21,6 +21,11 @@ void parseArguments(const char *command, char *args[])
 
 	while (token != NULL && i < MAX_COMMAND_LENGTH - 1)
 	{
+		if (i > 0)
+		{
+			fprintf(stderr, "Error: Only single-word commands are allowed.\n");
+			exit(EXIT_FAILURE);
+		}
 		args[i++] = token;
 		token = strtok(NULL, " ");
 	}
@@ -52,7 +57,6 @@ void executeChild(const char *command)
 	char *args[MAX_COMMAND_LENGTH];
 	char *path;
 	char executable[MAX_COMMAND_LENGTH];
-	char *token;
 
 	parseArguments(command, args);
 
@@ -69,21 +73,16 @@ void executeChild(const char *command)
 		exit(EXIT_FAILURE);
 	}
 
-	token = strtok(path, ":");
-	while (token != NULL)
+	snprintf(executable, sizeof(executable), "%s/%s", path, args[0]);
+
+	if (access(executable, X_OK) == 0)
 	{
-		snprintf(executable, sizeof(executable), "%s/%s", token, args[0]);
-
-		if (access(executable, X_OK) == 0)
+		if (execv(executable, args) == -1)
 		{
-			if (execv(executable, args) == -1)
-			{
-				perror("execv");
-				exit(EXIT_FAILURE);
-			}
+			perror("execv");
+			fprintf(stderr, "Error: Execution failed for command: %s\n", args[0]);
+			exit(EXIT_FAILURE);
 		}
-
-		token = strtok(NULL, ":");
 	}
 
 	fprintf(stderr, "Error: Command not found: %s\n", args[0]);
