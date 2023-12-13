@@ -18,6 +18,7 @@
 
 extern char **environ;
 
+
 /**
  * struct data - struct containing all relevant data on runtime
  * @argv: argument vector
@@ -105,12 +106,14 @@ void support_env_tasks(void);
 void assist_general_command(void);
 void print_exit_help(void);
 
+
 char *custom_strcat(char *custom_dest, const char *source);
 char *custom_strcpy(char *custom_dest, char *source);
 int custom_strcmp(char *str1, char *str2);
 
 char *custom_strchr(char *str, char c);
 int custom_strspn(char *str, char *receive);
+
 
 void cd_dot_get(data_container *data);
 void cd_to_get(data_container *data);
@@ -135,13 +138,17 @@ int char_cmp(char s[], const char *delimiter);
 int custom_strlen(const char *str);
 char *custom_strdup(const char *str);
 
+
+
 int count_digit(int n);
 char *intToStr(int n);
 int custom_atoi(const char *str);
 
+
 void custom_memcpy(void *destination, const void *source, unsigned int size);
 char **resizedp(char **src, unsigned int orig_size, unsigned int new_size);
 void *custom_realloc(void *src, unsigned int orig_size, unsigned int new_size);
+
 
 void deallocate_rvar_list(r_var **list);
 r_var *append_to_rva(r_var **list, int lvar, char *value, int lval);
@@ -157,7 +164,7 @@ void verify_envn(r_var **heads, char *insert, data_container *data);
 char **crack_line(char *insert);
 int crack_cmd(data_container *data, char *insert);
 void next_line(separator_list **sep_list,
-			   c_line_list **line_list, data_container *data);
+c_line_list **line_list, data_container *data);
 void add_sep(separator_list **sep_head, c_line_list **line_head, char *insert);
 char *replace_char(char *insert, int bool);
 
@@ -204,4 +211,6 @@ int initial_char(char *insert, int *n);
 int err_sep_op(char *insert, int n, char final);
 int char_dup(char *insert, int n);
 
+
 #endif
+

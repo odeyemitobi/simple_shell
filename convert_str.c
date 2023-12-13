@@ -36,32 +36,28 @@ int count_digit(int n)
  */
 char *intToStr(int n)
 {
-	unsigned int i;
-	int len = count_digit(n);
-	char *buff;
+	unsigned int i = n < 0 ? -n : n;
+	int len = n < 0 ? 2 : 1;
 
-	buff = malloc(sizeof(char) * (len + 1));
-	if (buff == 0)
+	char *buff;
+	unsigned int temp = i;
+
+	for (; temp /= 10; len++)
+		;
+
+	buff = malloc(len + 1);
+	if (buff == NULL)
 		return (NULL);
 
-	*(buff + len) = '\0';
-
+	buff[len--] = '\0';
 	if (n < 0)
-	{
-		i = n * -1;
 		buff[0] = '-';
-	}
-	else
-	{
-		i = n;
-	}
 
-	len--;
 	do {
-		*(buff + len) = (i % 10) + '0';
-		i = i / 10;
-		len--;
+		buff[len--] = i % 10 + '0';
+		i /= 10;
 	} while (i > 0);
+
 	return (buff);
 }
 
