@@ -1,4 +1,7 @@
 #include "shell.h"
+#include <unistd.h>
+#include <stdlib.h>
+#include <string.h>
 
 /**
  * main - runs the core logic of the shell
@@ -9,18 +12,21 @@ int main(void)
 {
 	char command[MAX_COMMAND_LENGTH];
 	size_t len;
+	ssize_t read_bytes;
 
 	while (1)
 	{
 		displayPrompt();
 
-		if (fgets(command, sizeof(command), stdin) == NULL)
+		read_bytes = read(STDIN_FILENO, command, sizeof(command));
+
+		if (read_bytes == -1)
 		{
-			printf("\n");
+			write(STDOUT_FILENO, "\n", 1);
 			break;
 		}
 
-		len = strlen(command);
+		len = (size_t)read_bytes;
 
 		if (len > 0 && command[len - 1] == '\n')
 		{
@@ -28,9 +34,10 @@ int main(void)
 		}
 
 		command[strcspn(command, "\n")] = '\0';
+
 		if (strcmp(command, "exit") == 0)
 		{
-			printf("Exit Tobi and Ella's List.\n");
+			write(STDOUT_FILENO, "Exit the shell.\n", sizeof("Exit the shell.\n") - 1);
 			break;
 		}
 
@@ -39,3 +46,4 @@ int main(void)
 
 	return (0);
 }
+
