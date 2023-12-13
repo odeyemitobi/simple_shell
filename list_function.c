@@ -1,68 +1,108 @@
 #include "shell.h"
 
 /**
- * readUserInput - Read user input from standard input
- * @args: Pointer to store the user input
- * @size_args: Pointer to the size of the input buffer
- *
- * Description: This function displays the shell prompt, reads user input from
- * standard input, and stores it in the provided buffer.
- *
- * Return: The number of characters read, or -1 on failure.
- */
-ssize_t readUserInput(char **args, size_t *size_args)
-{
-	write(STDOUT_FILENO, "Kel&Afia$ ", 11);
-	return (getline(args, size_args, stdin));
-}
-
-/**
- * writeError - Write error message for command not found
- * @input: Command that was not found
- *
- * Description: This function writes an error message to standard error output
- * when a command is not found.
+ * add_sep_node_end - function to adds a separator
+ * @head: linked list head.
+ * @sep: separator found (; | &).
+ * Return: head address.
  */
 
-void writeError(char *input)
+sep_list *add_sep_node_end(sep_list **head, char sep)
 {
-	write(STDERR_FILENO, "./hsh: 1: ", 10);
-	write(STDERR_FILENO, input, _strlen(input));
-	write(STDERR_FILENO, ": not found\n", 12);
-}
+	sep_list *new, *temp;
 
-/**
- * writeExitError - Write error message for illegal exit number
- * @nomber: Exit number that is not valid
- *
- * Description: This function writes an error message to standard error output
- * when an illegal exit number is provided.
- */
+	new = malloc(sizeof(sep_list));
+	if (new == NULL)
+		return (NULL);
 
-void writeExitError(char *nomber)
-{
-	write(STDERR_FILENO, "./hsh: 1: exit: Illegal number: ", 32);
-	write(STDERR_FILENO, nomber, _strlen(nomber));
-	write(STDERR_FILENO, "\n", 1);
-}
+	new->separator = sep;
+	new->next = NULL;
+	temp = *head;
 
-/**
- * freeArgs - Free memory allocated for an array of strings
- * @args: Pointer to the array of strings to be freed
- *
- * Description: This function frees the memory
- * allocated for an array of strings.
- */
-void freeArgs(char **args)
-{
-	int i;
-
-	if (!args)
-		return;
-	for (i = 0; args[i] != NULL; i++)
+	if (temp == NULL)
+		*head = new;
+	else
 	{
-		free(args[i]);
+		while (temp->next != NULL)
+			temp = temp->next;
+		temp->next = new;
 	}
-	free(args);
+
+	return (*head);
 }
 
+/**
+ * free_sep_list - function to frees a sep_list
+ * @head: linked list head.
+ * Return: nothing.
+ */
+
+void free_sep_list(sep_list **head)
+{
+	sep_list *temp;
+	sep_list *curr;
+
+	if (head != NULL)
+	{
+		curr = *head;
+		while ((temp = curr) != NULL)
+		{
+			curr = curr->next;
+			free(temp);
+		}
+		*head = NULL;
+	}
+}
+
+/**
+ * add_line_node_end - function to adds command line
+ * @head: linked list head
+ * @line: command line
+ * Return: The head address
+ */
+
+line_list *add_line_node_end(line_list **head, char *line)
+{
+	line_list *new, *temp;
+
+	new = malloc(sizeof(line_list));
+	if (new == NULL)
+		return (NULL);
+
+	new->line = line;
+	new->next = NULL;
+	temp = *head;
+
+	if (temp == NULL)
+		*head = new;
+	else
+	{
+		while (temp->next != NULL)
+			temp = temp->next;
+		temp->next = new;
+	}
+
+	return (*head);
+}
+
+/**
+ * free_line_list - function to free line_list
+ * @head: linked list head
+ * Return: nothing
+ */
+void free_line_list(line_list **head)
+{
+	line_list *temp;
+	line_list *curr;
+
+	if (head != NULL)
+	{
+		curr = *head;
+		while ((temp = curr) != NULL)
+		{
+			curr = curr->next;
+			free(temp);
+		}
+		*head = NULL;
+	}
+}

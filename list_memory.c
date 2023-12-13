@@ -1,140 +1,88 @@
 #include "shell.h"
 
 /**
- * _strdup - Duplicate a string in memory
- * @src: Pointer to the source string to duplicate
- *
- * Description: This function duplicates a string in memory.
- *
- * Return: A pointer to the newly allocated
- * duplicated string, or NULL if memory allocation fails.
+ * _memcpy - function to copies information btwn pointers
+ * @newptr: pointer to destination
+ * @ptr: source pointer
+ * @size: new pointer size
+ * Return: nothing
+ */
+void _memcpy(void *newptr, const void *ptr, unsigned int size)
+{
+	char *char_ptr = (char *)ptr;
+	char *char_newptr = (char *)newptr;
+	unsigned int i;
+
+	for (i = 0; i < size; i++)
+		char_newptr[i] = char_ptr[i];
+}
+
+/**
+ * _realloc - reallocates a memory block
+ * @ptr: pointer to the memory previously allocated
+ * @old_size: size, in bytes, of the allocated space of ptr
+ * @new_size: new size, in bytes, of the new memory block
+ * Return: ptr
+ * if new_size == old_size, returns ptr without changes
  */
 
-char *_strdup(const char *src)
+void *_realloc(void *ptr, unsigned int old_size, unsigned int new_size)
 {
-	char *str;
-	char *p;
-	int len;
+	void *newptr;
 
-	len = 0;
-	while (src[len])
-		len++;
-	str = malloc(len + 1);
-	if (!str)
+	if (ptr == NULL)
+		return (malloc(new_size));
+
+	if (new_size == 0)
+	{
+		free(ptr);
 		return (NULL);
-	p = str;
-	while (*src)
-		*p++ = *src++;
-	*p = '\0';
-	return (str);
+	}
+
+	if (new_size == old_size)
+		return (ptr);
+
+	newptr = malloc(new_size);
+	if (newptr == NULL)
+		return (NULL);
+
+	if (new_size < old_size)
+		_memcpy(newptr, ptr, new_size);
+	else
+		_memcpy(newptr, ptr, old_size);
+
+	free(ptr);
+	return (newptr);
 }
 
 /**
- * _strlen - Calculate the length of a string
- * @str: Pointer to the string
- *
- * Description: This function calculates the length of a string.
- *
- * Return: The length of the string.
+ * _reallocdp - reallocates a memory block of a double pointer
+ * @ptr: double pointer to the memory previously allocated
+ * @old_size: size, in bytes, of the allocated space of ptr
+ * @new_size: new size, in bytes, of the new memory block
+ * Return: ptr
+ * if new_size == old_size, returns ptr without changes
  */
 
-int _strlen(const char *str)
+char **_reallocdp(char **ptr, unsigned int old_size, unsigned int new_size)
 {
-	int len;
+	char **newptr;
+	unsigned int i;
 
-	len = 0;
-	while (str[len] != '\0')
-		len++;
-	return (len);
+	if (ptr == NULL)
+		return (malloc(sizeof(char *) * new_size));
+
+	if (new_size == old_size)
+		return (ptr);
+
+	newptr = malloc(sizeof(char *) * new_size);
+	if (newptr == NULL)
+		return (NULL);
+
+	for (i = 0; i < old_size; i++)
+		newptr[i] = ptr[i];
+
+	free(ptr);
+
+	return (newptr);
 }
-
-/**
- * _strcmp - Compare two strings
- * @s1: First string
- * @s2: Second string
- *
- * Description: This function compares two strings.
- *
- * Return: 0 if the strings are equal, a
- * positive value if s1 is greater, and a negative value if s2 is greater.
- */
-
-int _strcmp(char *s1, char *s2)
-{
-	int i;
-
-	i = 0;
-	while (s1[i] != '\0' && s2[i] != '\0')
-	{
-		if (s1[i] != s2[i])
-		{
-			return (s1[i] - s2[i]);
-		}
-		i++;
-	}
-	return (s1[i] - s2[i]);
-}
-
-/**
- * _atoi - Convert a string to an integer
- * @s: Pointer to the string to convert
- *
- * Description: This function converts a string to an integer.
- *
- * Return: The converted integer.
- */
-
-int _atoi(char *s)
-{
-	int sign = 1, i;
-	unsigned int res;
-
-	sign = 1, i = 0;
-	res = 0;
-	while (!(s[i] <= '9' && s[i] >= '0') && s[i] != '\0')
-	{
-		if (s[i] == '-')
-			sign *= -1;
-		i++;
-	}
-	while (s[i] <= '9' && (s[i] >= '0' && s[i] != '\0'))
-	{
-		res = (res * 10) + (s[i] - '0');
-		i++;
-	}
-	res *= sign;
-	return (res);
-}
-
-/* betty style header for _getenv function */
-
-/**
- * _getenv - Get the value of an environment variable
- * @path: Pointer to the environment variable name
- *
- * Description: This function retrieves.
- * the value of an environment variable
- *
- * Return: A pointer to the value of the environment
- * variable, or NULL if not found.
- */
-
-char *_getenv(const char *path)
-{
-	int i;
-	int len;
-
-	len = _strlen((char *)path);
-	for (i = 0; environ[i] != NULL; i++)
-	{
-		if (!strncmp(path, environ[i], len))
-		{
-			if (environ[i][len] == '=')
-			{
-				return (environ[i] + len + 1);
-			}
-		}
-	}
-	return (NULL);
-}
-
