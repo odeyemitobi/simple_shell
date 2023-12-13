@@ -5,17 +5,19 @@
 #include <stdlib.h>
 #include <string.h>
 #include <unistd.h>
+#include <sys/types.h>
 #include <sys/wait.h>
+#include <signal.h>
+#include <fcntl.h>
+#include <sys/stat.h>
 
 #define MAX_COMMAND_LENGTH 100
 
 extern char **environ;
 
 void displayPrompt(void);
-void executeCommand(const char *command);
 void parseArguments(const char *command, char *args[]);
-void printEnvironment(void);
-void executeChild(const char *command);
-void executeParent(pid_t pid);
+void executeCommand(const char *command);
 
 #endif /* SHELL_H */
+
