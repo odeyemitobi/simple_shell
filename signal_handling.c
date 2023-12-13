@@ -10,5 +10,5 @@
 void obtain_signal(int sig_val)
 {
 	(void)sig_val;
-	write(STDOUT_FILENO, "\n^-^ ", 5);
+	write(STDOUT_FILENO, "\n $ ", 2);
 }
