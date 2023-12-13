@@ -19,10 +19,25 @@ void parseArguments(const char *command, char *args[])
 	char *token = strtok(copy, " ");
 	int i = 0;
 
-	while (token != NULL && i < MAX_COMMAND_LENGTH - 1)
+	while (token != NULL)
 	{
+		if (strchr(token, ';') || strchr(token, '|') || strchr(token, '>'))
+		{
+			write(STDERR_FILENO, "Error: failed.\n", sizeof("Error: failed.\n") - 1);
+			free(copy);
+			_exit(EXIT_FAILURE);
+		}
+
 		args[i++] = token;
 		token = strtok(NULL, " ");
+	}
+
+	if (i != 1)
+	{
+		write(STDERR_FILENO, "Error: Single-word commands only.\n",
+		sizeof("Error: Single-word commands only.\n") - 1);
+		free(copy);
+		_exit(EXIT_FAILURE);
 	}
 	args[i] = NULL;
 
@@ -49,9 +64,12 @@ void executeCommand(const char *command)
 
 		parseArguments(command, args);
 
-		if (execve(args[0], args, NULL) == -1)
+		if (execve(args[0], args, environ) == -1)
 		{
-			perror("execve");
+			char errorMessage[] = "Error: Command not found\n";
+
+			write(STDERR_FILENO, errorMessage, sizeof(errorMessage) - 1);
+
 			_exit(EXIT_FAILURE);
 		}
 	}
@@ -67,12 +85,15 @@ void executeCommand(const char *command)
 
 		if (WIFEXITED(status))
 		{
-			write(1, "Successfully Executed.\n", 24);
+			char successMessage[] = "Successfully Executed.\n";
+
+			write(STDOUT_FILENO, successMessage, sizeof(successMessage) - 1);
 		}
 		else
 		{
-			write(1, "Command Failed.\n", 16);
+			char errorMessage[] = "Command Failed.\n";
+
+			write(STDOUT_FILENO, errorMessage, sizeof(errorMessage) - 1);
 		}
 	}
 }
-
