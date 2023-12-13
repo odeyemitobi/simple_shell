@@ -35,13 +35,62 @@ void parseArguments(const char *command, char *args[])
 	if (i != 1)
 	{
 		write(STDERR_FILENO, "Error: Single-word commands only.\n",
-		sizeof("Error: Single-word commands only.\n") - 1);
+				sizeof("Error: Single-word commands only.\n") - 1);
 		free(copy);
 		_exit(EXIT_FAILURE);
 	}
 	args[i] = NULL;
 
 	free(copy);
+}
+
+/**
+ * executeChild - forks a child process and executes the command in the CP.
+ * @command: pointer to the command string
+ */
+
+void executeChild(const char *command)
+{
+	char *args[MAX_COMMAND_LENGTH];
+	
+	parseArguments(command, args);
+
+	if (execvp(args[0], args) == -1)
+	{
+		char errorMessage[] = "Error: Command not found\n";
+		
+		write(STDERR_FILENO, errorMessage, sizeof(errorMessage) - 1);
+		_exit(EXIT_FAILURE);
+	}
+}
+
+/**
+ * executeParent - forks a child process and executes the command in the CP.
+ * @pid: pointer to the command string
+ */
+
+
+void executeParent(pid_t pid)
+{
+	int status;
+
+	if (waitpid(pid, &status, 0) == -1)
+	{
+		perror("waitpid");
+		exit(EXIT_FAILURE);
+	}
+
+	if (WIFEXITED(status))
+	{
+		char successMessage[] = "Successfully Executed.\n";
+		
+		write(STDOUT_FILENO, successMessage, sizeof(successMessage) - 1);
+	} else
+	{
+		
+		char errorMessage[] = "Command Failed.\n";
+		write(STDOUT_FILENO, errorMessage, sizeof(errorMessage) - 1);
+	}
 }
 
 /**
@@ -57,43 +106,12 @@ void executeCommand(const char *command)
 	{
 		perror("fork");
 		exit(EXIT_FAILURE);
-	}
-	else if (pid == 0)
+	} else if (pid == 0)
 	{
-		char *args[MAX_COMMAND_LENGTH];
-
-		parseArguments(command, args);
-
-		if (execve(args[0], args, environ) == -1)
-		{
-			char errorMessage[] = "Error: Command not found\n";
-
-			write(STDERR_FILENO, errorMessage, sizeof(errorMessage) - 1);
-
-			_exit(EXIT_FAILURE);
-		}
-	}
-	else
+		executeChild(command);
+	} else
 	{
-		int status;
-
-		if (waitpid(pid, &status, 0) == -1)
-		{
-			perror("waitpid");
-			exit(EXIT_FAILURE);
-		}
-
-		if (WIFEXITED(status))
-		{
-			char successMessage[] = "Successfully Executed.\n";
-
-			write(STDOUT_FILENO, successMessage, sizeof(successMessage) - 1);
-		}
-		else
-		{
-			char errorMessage[] = "Command Failed.\n";
-
-			write(STDOUT_FILENO, errorMessage, sizeof(errorMessage) - 1);
-		}
+		executeParent(pid);
 	}
 }
+
