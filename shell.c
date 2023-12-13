@@ -1,48 +1,42 @@
 #include "shell.h"
-#include <unistd.h>
-#include <stdlib.h>
-#include <string.h>
 
 /**
- * main - runs the core logic of the shell
- * Return: status code 0
+ * main - Entry point of the shell program
+ *
+ * Description: This function is the entry point of the shell program.
+ * It reads user input and processes the commands either interactively
+ * or in non-interactive mode based on whether the standard input is a TTY.
+ *
+ * Return: Always 0 to indicate successful execution.
  */
-
 int main(void)
 {
-	char command[MAX_COMMAND_LENGTH];
-	size_t len;
-	ssize_t read_bytes;
+	size_t size_prompt;
 
-	while (1)
+	char *prompt;
+
+	int status;
+
+	size_prompt = 0;
+
+	prompt = NULL;
+
+	status = 0;
+
+	if (!isatty(0))
 	{
-		displayPrompt();
-
-		read_bytes = read(STDIN_FILENO, command, sizeof(command));
-
-		if (read_bytes == -1)
+		while (getline(&prompt, &size_prompt, stdin) != -1)
 		{
-			write(STDOUT_FILENO, "\n", 1);
-			break;
+			nonInteractMode(prompt, &status);
 		}
-
-		len = (size_t)read_bytes;
-
-		if (len > 0 && command[len - 1] == '\n')
+		if (prompt)
 		{
-			command[len - 1] = '\0';
+			free(prompt);
+			prompt = NULL;
 		}
-
-		command[strcspn(command, "\n")] = '\0';
-
-		if (strcmp(command, "exit") == 0)
-		{
-			write(STDOUT_FILENO, "Exit the shell.\n", sizeof("Exit the shell.\n") - 1);
-			break;
-		}
-
-		executeCommand(command);
+		return (status);
 	}
-
+	startMyshell();
 	return (0);
 }
+
