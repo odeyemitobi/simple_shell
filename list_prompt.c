@@ -6,7 +6,7 @@
  */
 void displayPrompt(void)
 {
-	printf("Tobi and Ella's List.\n");
-	fflush(stdout);
+	if (isatty(STDIN_FILENO))
+		write(STDOUT_FILENO, "$ ", 2);
 }
 
