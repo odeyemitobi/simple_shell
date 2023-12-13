@@ -10,7 +10,7 @@ void support_env_tasks(void)
 	char *help = "env: env [option] [name=value] [command [args]]\n\t";
 
 	write(STDOUT_FILENO, help, custom_strlen(help));
-	help = "Print the enviroment of the shell.\n";
+	help = "Print the shell environment.\n";
 
 	write(STDOUT_FILENO, help, custom_strlen(help));
 }
@@ -38,7 +38,7 @@ void support_unsetenv_command(void)
 	char *help = "unsetenv: unsetenv (const char *name)\n\t";
 
 	write(STDOUT_FILENO, help, custom_strlen(help));
-	help = "Remove an entry completely from the environment\n";
+	help = "Remove the entry completely\n";
 	write(STDOUT_FILENO, help, custom_strlen(help));
 }
 

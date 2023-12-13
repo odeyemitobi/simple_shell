@@ -8,18 +8,17 @@
  */
 char *custom_strcat(char *custom_dest, const char *source)
 {
-	int a, b;
+	int a = 0;
+	int b;
 
-	for (a = 0; custom_dest[a] != '\0'; a++)
-		;
-
-	for (b = 0; source[b] != '\0'; b++)
+	while (custom_dest[a] != '\0')
 	{
-		custom_dest[a] = source[b];
 		a++;
 	}
 
-	custom_dest[a] = '\0';
+	for (b = 0; (custom_dest[a + b] = source[b]) != '\0'; b++)
+		;
+
 	return (custom_dest);
 }
 
@@ -112,4 +111,3 @@ int custom_strspn(char *str, char *receive)
 	}
 	return (i);
 }
-
