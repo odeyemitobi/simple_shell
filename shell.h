@@ -20,5 +20,3 @@ void parseArguments(const char *command, char *args[]);
 void executeCommand(const char *command);
 
 #endif /* SHELL_H */
-
-

@@ -20,15 +20,10 @@ int main(void)
 
 		read_bytes = read(STDIN_FILENO, command, sizeof(command));
 
-		if (read_bytes == 0)
+		if (read_bytes == -1)
 		{
 			write(STDOUT_FILENO, "\n", 1);
 			break;
-		}
-		else if (read_bytes == -1)
-		{
-			perror("read");
-			exit(EXIT_FAILURE);
 		}
 
 		len = (size_t)read_bytes;
@@ -51,6 +46,3 @@ int main(void)
 
 	return (0);
 }
-
-
-
