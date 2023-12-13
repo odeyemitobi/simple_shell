@@ -35,7 +35,7 @@ void parseArguments(const char *command, char *args[])
 	if (i != 1)
 	{
 		write(STDERR_FILENO, "Error: Single-word commands only.\n",
-				sizeof("Error: Single-word commands only.\n") - 1);
+			  sizeof("Error: Single-word commands only.\n") - 1);
 		free(copy);
 		_exit(EXIT_FAILURE);
 	}
@@ -52,13 +52,13 @@ void parseArguments(const char *command, char *args[])
 void executeChild(const char *command)
 {
 	char *args[MAX_COMMAND_LENGTH];
-	
+
 	parseArguments(command, args);
 
 	if (execvp(args[0], args) == -1)
 	{
 		char errorMessage[] = "Error: Command not found\n";
-		
+
 		write(STDERR_FILENO, errorMessage, sizeof(errorMessage) - 1);
 		_exit(EXIT_FAILURE);
 	}
@@ -68,7 +68,6 @@ void executeChild(const char *command)
  * executeParent - forks a child process and executes the command in the CP.
  * @pid: pointer to the command string
  */
-
 
 void executeParent(pid_t pid)
 {
@@ -83,12 +82,14 @@ void executeParent(pid_t pid)
 	if (WIFEXITED(status))
 	{
 		char successMessage[] = "Successfully Executed.\n";
-		
+
 		write(STDOUT_FILENO, successMessage, sizeof(successMessage) - 1);
-	} else
+	}
+	else
 	{
-		
+
 		char errorMessage[] = "Command Failed.\n";
+
 		write(STDOUT_FILENO, errorMessage, sizeof(errorMessage) - 1);
 	}
 }
@@ -106,12 +107,13 @@ void executeCommand(const char *command)
 	{
 		perror("fork");
 		exit(EXIT_FAILURE);
-	} else if (pid == 0)
+	}
+	else if (pid == 0)
 	{
 		executeChild(command);
-	} else
+	}
+	else
 	{
 		executeParent(pid);
 	}
 }
-
