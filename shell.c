@@ -1,56 +1,73 @@
 #include "shell.h"
-#include <unistd.h>
-#include <stdlib.h>
-#include <string.h>
 
 /**
- * main - runs the core logic of the shell
- * Return: status code 0
+ * free_data - function that frees data structure
+ *
+ * @datash: data structure
+ * Return: no return
  */
-
-int main(void)
+void free_data(data_shell *datash)
 {
-	char command[MAX_COMMAND_LENGTH];
-	size_t len;
-	ssize_t read_bytes;
+	unsigned int i;
 
-	while (1)
+	for (i = 0; datash->_environ[i]; i++)
 	{
-		displayPrompt();
-
-		read_bytes = read(STDIN_FILENO, command, sizeof(command));
-
-		if (read_bytes == 0)
-		{
-			write(STDOUT_FILENO, "\n", 1);
-			break;
-		}
-		else if (read_bytes == -1)
-		{
-			perror("read");
-			exit(EXIT_FAILURE);
-		}
-
-		len = (size_t)read_bytes;
-
-		if (len > 0 && command[len - 1] == '\n')
-		{
-			command[len - 1] = '\0';
-		}
-
-		command[strcspn(command, "\n")] = '\0';
-
-		if (strcmp(command, "exit") == 0)
-		{
-			write(STDOUT_FILENO, "Exit the shell.\n", sizeof("Exit the shell.\n") - 1);
-			break;
-		}
-
-		executeCommand(command);
+		free(datash->_environ[i]);
 	}
 
-	return (0);
+	free(datash->_environ);
+	free(datash->pid);
 }
 
+/**
+ * set_data - function for Initialize data structure
+ *
+ * @datash: data structure
+ * @av: argument vector
+ * Return: no return
+ */
+void set_data(data_shell *datash, char **av)
+{
+	unsigned int i;
 
+	datash->av = av;
+	datash->input = NULL;
+	datash->args = NULL;
+	datash->status = 0;
+	datash->counter = 1;
 
+	for (i = 0; environ[i]; i++)
+		;
+
+	datash->_environ = malloc(sizeof(char *) * (i + 1));
+
+	for (i = 0; environ[i]; i++)
+	{
+		datash->_environ[i] = _strdup(environ[i]);
+	}
+
+	datash->_environ[i] = NULL;
+	datash->pid = aux_itoa(getpid());
+}
+
+/**
+ * main - Entry point
+ *
+ * @ac: argument count
+ * @av: argument vector
+ *
+ * Return: 0 on success.
+ */
+int main(int ac, char **av)
+{
+	data_shell datash;
+	(void)ac;
+
+	signal(SIGINT, get_sigint);
+	set_data(&datash, av);
+	shell_loop(&datash);
+	free_data(&datash);
+	if (datash.status < 0)
+		return (255);
+	return (datash.status);
+}
